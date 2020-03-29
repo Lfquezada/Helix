@@ -3,10 +3,12 @@
 H E L I X
 '''
 
+import time
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 from urllib.request import urlopen
-import time
+from Bio.Seq import Seq
+from Bio import SeqIO
 
 # Functions
 
@@ -58,6 +60,7 @@ def findLongestMotif(dnaSeqs,verbose):
 			currentMinIndex = index
 	smallestSeq = dnaSeqs.pop(currentMinIndex)
 
+	allMotifs = []
 	allLongest = []
 	longest = ''
 
@@ -75,11 +78,12 @@ def findLongestMotif(dnaSeqs,verbose):
 					allLongest.append(currentSubSeq)
 				else:
 					longest = currentSubSeq
+					allMotifs += allLongest
 					allLongest = []
 					allLongest.append(currentSubSeq)
 			endIndex -= 1
 			currentSubSeq = smallestSeq[startIndex:endIndex]
-	return allLongest
+	return allLongest,allMotifs
 
 '''
 proteinIds = ['P40225_TPO_HUMAN','P01866_GCB_MOUSE','P81428_FA10_TROCA']
@@ -89,8 +93,6 @@ for id in proteinIds:
 	allSeq.append(getUniProtFasta(id))
 '''
 
-from Bio.Seq import Seq
-from Bio import SeqIO
 allSequenceRecords = SeqIO.parse('testSeqs.txt','fasta')
 allSeq = []
 for seq in allSequenceRecords:
@@ -98,14 +100,17 @@ for seq in allSequenceRecords:
 
 # Run proceses
 startTime = time.time()
-motifsFound = findLongestMotif(allSeq,verbose=True)
+longestMotifsFound,allMotifsFound = findLongestMotif(allSeq,verbose=True)
 deltaTime = time.time() - startTime
 
 # Final results
 print('_______________________________\n            Report\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n')
 print('- Search time:',str(deltaTime)[:5],'seconds')
 print('- Longest motif(s) found:')
-for motif in motifsFound:
+for motif in longestMotifsFound:
+	print('\t',motif,'\n')
+print('- All motifs found:')
+for motif in allMotifsFound:
 	print('\t',motif,'\n')
 print('_______________________________')
 
