@@ -46,7 +46,7 @@ def isGlobalSubfragment(fragment,seqs):
 
 # param: a list of dna sequences
 # return: all the longest motifs found in the sequences
-def findLongestMotif(dnaSeqs):
+def findLongestMotif(dnaSeqs,verbose):
 
 	# find and extract the smallest dna seq
 	currentMinIndex = 0
@@ -66,6 +66,9 @@ def findLongestMotif(dnaSeqs):
 		endIndex = len(smallestSeq)
 		currentSubSeq = smallestSeq[startIndex:endIndex]
 
+		if verbose:
+			print(currentSubSeq)
+
 		while len(currentSubSeq) >= len(longest):
 			if isGlobalSubfragment(currentSubSeq,dnaSeqs):
 				if len(currentSubSeq) == len(longest):
@@ -78,16 +81,24 @@ def findLongestMotif(dnaSeqs):
 			currentSubSeq = smallestSeq[startIndex:endIndex]
 	return allLongest
 
-
+'''
 proteinIds = ['P40225_TPO_HUMAN','P01866_GCB_MOUSE','P81428_FA10_TROCA']
 allSeq = []
 
 for id in proteinIds:
 	allSeq.append(getUniProtFasta(id))
+'''
+
+from Bio.Seq import Seq
+from Bio import SeqIO
+allSequenceRecords = SeqIO.parse('testSeqs.txt','fasta')
+allSeq = []
+for seq in allSequenceRecords:
+	allSeq.append(str(seq.seq))
 
 # Run proceses
 startTime = time.time()
-motifsFound = findLongestMotif(allSeq)
+motifsFound = findLongestMotif(allSeq,verbose=True)
 deltaTime = time.time() - startTime
 
 # Final results
