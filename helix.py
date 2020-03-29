@@ -67,9 +67,6 @@ def findLongestMotif(dnaSeqs):
 		currentSubSeq = smallestSeq[startIndex:endIndex]
 
 		while len(currentSubSeq) >= len(longest):
-
-			print(currentSubSeq)
-
 			if isGlobalSubfragment(currentSubSeq,dnaSeqs):
 				if len(currentSubSeq) == len(longest):
 					allLongest.append(currentSubSeq)
@@ -91,11 +88,11 @@ for id in proteinIds:
 # Run proceses
 startTime = time.time()
 motifsFound = findLongestMotif(allSeq)
-finishTime = time.time()
+deltaTime = time.time() - startTime
 
 # Final results
 print('_______________________________\n            Report\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n')
-print('- Search time:',str(finishTime - startTime)[:5],'seconds')
+print('- Search time:',str(deltaTime)[:5],'seconds')
 print('- Longest motif(s) found:')
 for motif in motifsFound:
 	print('\t',motif,'\n')
