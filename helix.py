@@ -30,8 +30,8 @@ def findMotifLocations(motif,seq):
 	motifLen = len(motif)
 	motifLocations = []
 
-	for i in range(0,len(dna)):
-		subseq = dna[i:(i+motifLen)]
+	for i in range(0,len(seq)):
+		subseq = seq[i:(i+motifLen)]
 		if subseq == motif:
 			motifLocations.append(str(i+1))
 	return motifLocations
@@ -60,7 +60,6 @@ def findLongestMotif(dnaSeqs,verbose):
 			currentMinIndex = index
 	smallestSeq = dnaSeqs.pop(currentMinIndex)
 
-	allMotifs = []
 	allLongest = []
 	longest = ''
 
@@ -78,25 +77,25 @@ def findLongestMotif(dnaSeqs,verbose):
 					allLongest.append(currentSubSeq)
 				else:
 					longest = currentSubSeq
-					allMotifs += allLongest
 					allLongest = []
 					allLongest.append(currentSubSeq)
 			endIndex -= 1
 			currentSubSeq = smallestSeq[startIndex:endIndex]
 	return allLongest,allMotifs
 
-'''
-proteinIds = ['P40225_TPO_HUMAN','P01866_GCB_MOUSE','P81428_FA10_TROCA']
+
+proteinIds = ['R1AB_CVHSA','R1AB_BCHK3','R1AB_CVMJH']
 allSeq = []
 
 for id in proteinIds:
 	allSeq.append(getUniProtFasta(id))
-'''
 
+'''
 allSequenceRecords = SeqIO.parse('testSeqs.txt','fasta')
 allSeq = []
 for seq in allSequenceRecords:
 	allSeq.append(str(seq.seq))
+'''
 
 # Run proceses
 startTime = time.time()
@@ -109,12 +108,10 @@ print('- Search time:',str(deltaTime)[:5],'seconds')
 print('- Longest motif(s) found:')
 for motif in longestMotifsFound:
 	print('\t',motif,'\n')
-print('- All motifs found:')
-for motif in allMotifsFound:
-	print('\t',motif,'\n')
 print('_______________________________')
 
 
+print(findMotifLocations(longestMotifsFound[0],allSeq[0]))
 
 
 
