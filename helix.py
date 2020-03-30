@@ -48,7 +48,7 @@ def isGlobalSubfragment(fragment,seqs):
 
 # param: a list of dna sequences
 # return: all the longest motifs found in the sequences
-def findLongestMotif(dnaSeqs,showProgressBar):
+def findLongestMotif(dnaSeqs):
 
 	# find and extract the smallest dna seq
 	currentMinIndex = 0
@@ -69,17 +69,7 @@ def findLongestMotif(dnaSeqs,showProgressBar):
 		endIndex = len(smallestSeq)
 		currentSubSeq = smallestSeq[startIndex:endIndex]
 
-		# Display progress bar
-		if showProgressBar:
-			percentage = startIndex/totalIterations
-			percentageBar = '['
-			for i in range(10):
-				if i < int(percentage*10):
-					percentageBar += '='
-				else:
-					percentageBar += '-'
-			percentageBar += ']'
-			print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',str(percentage*100)[:4],'% ',percentageBar)
+		print(str(startIndex/totalIterations*100)[:4],'%')
 
 		while len(currentSubSeq) >= len(longest):
 			if isGlobalSubfragment(currentSubSeq,dnaSeqs):
@@ -93,23 +83,23 @@ def findLongestMotif(dnaSeqs,showProgressBar):
 			currentSubSeq = smallestSeq[startIndex:endIndex]
 	return allLongest
 
-
+'''
 proteinIds = ['R1AB_CVHSA','R1AB_BCHK3','R1AB_CVMJH']
 allSeq = []
 
 for id in proteinIds:
 	allSeq.append(getUniProtFasta(id))
-
 '''
+
 allSequenceRecords = SeqIO.parse('testSeqs.txt','fasta')
 allSeq = []
 for seq in allSequenceRecords:
 	allSeq.append(str(seq.seq))
-'''
+
 
 # Run proceses
 startTime = time.time()
-longestMotifsFound = findLongestMotif(allSeq,showProgressBar=True)
+longestMotifsFound = findLongestMotif(allSeq)
 deltaTime = time.time() - startTime
 
 # Final results
