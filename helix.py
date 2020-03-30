@@ -48,7 +48,7 @@ def isGlobalSubfragment(fragment,seqs):
 
 # param: a list of dna sequences
 # return: all the longest motifs found in the sequences
-def findLongestMotif(dnaSeqs,verbose):
+def findLongestMotif(dnaSeqs,showProgressBar):
 
 	# find and extract the smallest dna seq
 	currentMinIndex = 0
@@ -62,14 +62,24 @@ def findLongestMotif(dnaSeqs,verbose):
 
 	allLongest = []
 	longest = ''
+	totalIterations = len(smallestSeq)
 
 	# Iterate over all posible combinations and find the longest shared motif
-	for startIndex in range(len(smallestSeq)):
+	for startIndex in range(len(smallestSeq)+1):
 		endIndex = len(smallestSeq)
 		currentSubSeq = smallestSeq[startIndex:endIndex]
 
-		if verbose:
-			print(currentSubSeq)
+		# Display progress bar
+		if showProgressBar:
+			percentage = startIndex/totalIterations
+			percentageBar = '['
+			for i in range(10):
+				if i < int(percentage*10):
+					percentageBar += '='
+				else:
+					percentageBar += '-'
+			percentageBar += ']'
+			print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',str(percentage*100)[:4],'% ',percentageBar)
 
 		while len(currentSubSeq) >= len(longest):
 			if isGlobalSubfragment(currentSubSeq,dnaSeqs):
@@ -81,7 +91,7 @@ def findLongestMotif(dnaSeqs,verbose):
 					allLongest.append(currentSubSeq)
 			endIndex -= 1
 			currentSubSeq = smallestSeq[startIndex:endIndex]
-	return allLongest,allMotifs
+	return allLongest
 
 
 proteinIds = ['R1AB_CVHSA','R1AB_BCHK3','R1AB_CVMJH']
@@ -99,7 +109,7 @@ for seq in allSequenceRecords:
 
 # Run proceses
 startTime = time.time()
-longestMotifsFound,allMotifsFound = findLongestMotif(allSeq,verbose=True)
+longestMotifsFound = findLongestMotif(allSeq,showProgressBar=True)
 deltaTime = time.time() - startTime
 
 # Final results
