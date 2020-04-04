@@ -9,6 +9,8 @@ ssl._create_default_https_context = ssl._create_unverified_context
 from urllib.request import urlopen
 from Bio.Seq import Seq
 from Bio import SeqIO
+import tkinter as tk
+from tkinter import ttk
 
 # Functions
 
@@ -83,37 +85,184 @@ def findLongestMotif(dnaSeqs):
 			currentSubSeq = smallestSeq[startIndex:endIndex]
 	return allLongest
 
+
+# Home Screen
+def mainApp(reload):
+	root.title('Helix')
+
+	global canvas, frame
+
+	if reload:
+		canvas.destroy()
+		frame.destroy()
+
+	canvas = tk.Canvas(root,height=400,width=700,bg=appBgColor)
+	canvas.pack()
+	frame = tk.Frame(root,bg=appBgColor)
+	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
+
+	spacerTop = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
+	spacerTop.pack(side='top')
+	helixLogoLabel = tk.Label(frame,image=helixLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
+	helixLogoLabel.pack(side='top')
+
+	uniProtLogoLabel = tk.Label(frame,image=unitProtLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
+	uniProtLogoLabel.place(relx=0.2,rely=0.8)
+	ncbiLogoLabel = tk.Label(frame,image=ncbiLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
+	ncbiLogoLabel.place(relx=0.35,rely=0.8)
+	bioPythonLogoLabel = tk.Label(frame,image=bioPythonLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
+	bioPythonLogoLabel.place(relx=0.5,rely=0.8)
+	pubmedLogoLabel = tk.Label(frame,image=pubmedLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
+	pubmedLogoLabel.place(relx=0.65,rely=0.8)
+
+	options = ['Find longest shared motif','Find motif locations','Get sequence']
+	selectedOption = tk.StringVar(frame)
+	selectedOption.set(options[0])
+	dropDownMenu = tk.OptionMenu(frame,selectedOption,options[0],options[1],options[2])
+	dropDownMenu.config(bg=appBgColor)
+	dropDownMenu.place(relx=0.1,rely=0.5,relwidth=0.5)
+
+	goButton = tk.Button(frame,text='Go',fg=lightLetterColor,command=lambda: redirect(selectedOption.get()))
+	goButton.config(bg=appBgColor)
+	goButton.place(relx=0.68,rely=0.5,relwidth=0.15)
+
+
+def redirect(selectedOption):
+	if selectedOption == 'Find longest shared motif':
+		getLSMPage()
+	if selectedOption == 'Find motif locations':
+		getMLocPage()
+	if selectedOption == 'Get sequence':
+		getSeqPage()
+
+
+def getLSMPage():
+	root.title('Longest Shared Motif')
+
+	global canvas, frame
+	canvas.destroy()
+	frame.destroy()
+
+	canvas = tk.Canvas(root,height=400,width=700,bg=appBgColor)
+	canvas.pack()
+	frame = tk.Frame(root,bg=appBgColor)
+	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
+
+	spacer1 = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
+	spacer1.pack(side='top')
+	instruction = tk.Label(frame,text = 'Enter protein IDs or filename',fg='white',bg=appBgColor)
+	instruction.pack(side='top')
+	entry = tk.Entry(frame,fg='white',bg='#141414',width=50)
+	entry.pack(side='top')
+
+	spacer2 = tk.Label(frame,text='',font='Arial 20',bg=appBgColor)
+	spacer2.pack(side='top')
+	searchButton = tk.Button(frame,text='  Search  ',fg=lightLetterColor,command=lambda: search(entry.get()))
+	searchButton.config(bg=appBgColor)
+	searchButton.pack(side='top')
+
+	spacer3 = tk.Label(frame,text='',font='Arial 30',bg=appBgColor)
+	spacer3.pack(side='top')
+	global resultListbox
+	resultListbox = tk.Listbox(frame,background='#141414',fg='white',selectbackground='#2f6492',width=50,height=8)
+	resultListbox.pack(side='top')
+
+	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
+	returnButton.config(bg=appBgColor)
+	returnButton.pack(side='bottom')
+
+
+# test IDs: R1AB_CVHSA,R1AB_BCHK3,R1AB_CVMJH
+def search(entry):
+	if '.txt' in entry:
+		allSequenceRecords = SeqIO.parse(entry,'fasta')
+		allSeq = []
+		for seq in allSequenceRecords:
+			allSeq.append(str(seq.seq))
+
+	elif entry != '':
+		proteinIds = entry.split(',')
+		allSeq = []
+		for id in proteinIds:
+			allSeq.append(getUniProtFasta(id))
+
+	if entry != '':
+		# Run process
+		startTime = time.time()
+		longestMotifsFound = findLongestMotif(allSeq)
+		deltaTime = time.time() - startTime
+
+		resultListbox.insert(0,longestMotifsFound[0])
+		resultListbox.insert(0,'Time: ' + str(deltaTime)[:5] + 's')
+		for i in range(1,len(longestMotifsFound)):
+			resultListbox.insert(i,longestMotifsFound[i-1])
+
+
+def getMLocPage():
+	root.title('Motif Locations')
+
+	global canvas, frame
+	canvas.destroy()
+	frame.destroy()
+
+	canvas = tk.Canvas(root,height=400,width=700,bg=appBgColor)
+	canvas.pack()
+	frame = tk.Frame(root,bg=appBgColor)
+	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
+
+	spacerTop = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
+	spacerTop.pack(side='top')
+	helixLogoLabel = tk.Label(frame,image=helixLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
+	helixLogoLabel.pack(side='top')
+
+	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
+	returnButton.config(bg=appBgColor)
+	returnButton.pack(side='bottom')
+
+
+def getSeqPage():
+	root.title('Get Sequence')
+
+	global canvas, frame
+	canvas.destroy()
+	frame.destroy()
+
+	canvas = tk.Canvas(root,height=400,width=700,bg=appBgColor)
+	canvas.pack()
+	frame = tk.Frame(root,bg=appBgColor)
+	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
+
+	spacerTop = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
+	spacerTop.pack(side='top')
+	helixLogoLabel = tk.Label(frame,image=helixLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
+	helixLogoLabel.pack(side='top')
+
+	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
+	returnButton.config(bg=appBgColor)
+	returnButton.pack(side='bottom')
+
+
 '''
-proteinIds = ['R1AB_CVHSA','R1AB_BCHK3','R1AB_CVMJH']
-allSeq = []
-
-for id in proteinIds:
-	allSeq.append(getUniProtFasta(id))
+------------------------------------------
+				Run App
+------------------------------------------
 '''
 
-allSequenceRecords = SeqIO.parse('testSeqs.txt','fasta')
-allSeq = []
-for seq in allSequenceRecords:
-	allSeq.append(str(seq.seq))
+root = tk.Tk()
+root.configure(background='white')
 
+# preload assets
+unitProtLogo = tk.PhotoImage(file='assets/logo-uniprot.png')
+ncbiLogo = tk.PhotoImage(file='assets/logo-ncbi.png')
+bioPythonLogo = tk.PhotoImage(file='assets/logo-biopython.png')
+pubmedLogo = tk.PhotoImage(file='assets/logo-pubmed.png')
+helixLogo = tk.PhotoImage(file='assets/logo-helix.png')
+appBgColor = '#181818'
+lightLetterColor = '#3d3d3d'
 
-# Run proceses
-startTime = time.time()
-longestMotifsFound = findLongestMotif(allSeq)
-deltaTime = time.time() - startTime
-
-# Final results
-print('_______________________________\n            Report\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n')
-print('- Search time:',str(deltaTime)[:5],'seconds')
-print('- Longest motif(s) found:')
-for motif in longestMotifsFound:
-	print('\t',motif,'\n')
-print('_______________________________')
-
-
-print(findMotifLocations(longestMotifsFound[0],allSeq[0]))
-
-
+# run home screen
+mainApp(reload=False)
+root.mainloop()
 
 
 
