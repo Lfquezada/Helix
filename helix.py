@@ -71,11 +71,11 @@ def findLongestMotif(dnaSeqs):
 		endIndex = len(smallestSeq)
 		currentSubSeq = smallestSeq[startIndex:endIndex]
 
-		print(str(startIndex/totalIterations*100)[:4],'%')
+		#print(str(startIndex/totalIterations*100)[:4],'%')
 
 		while len(currentSubSeq) >= len(longest):
 			if isGlobalSubfragment(currentSubSeq,dnaSeqs):
-				if len(currentSubSeq) == len(longest):
+				if len(currentSubSeq) == len(longest) and currentSubSeq != longest:
 					allLongest.append(currentSubSeq)
 				else:
 					longest = currentSubSeq
@@ -174,28 +174,32 @@ def getLSMPage():
 
 # test IDs: R1AB_CVHSA,R1AB_BCHK3,R1AB_CVMJH
 def search(entry):
-	if '.txt' in entry:
-		allSequenceRecords = SeqIO.parse(entry,'fasta')
-		allSeq = []
-		for seq in allSequenceRecords:
-			allSeq.append(str(seq.seq))
-
-	elif entry != '':
-		proteinIds = entry.split(',')
-		allSeq = []
-		for id in proteinIds:
-			allSeq.append(getUniProtFasta(id))
 
 	if entry != '':
-		# Run process
-		startTime = time.time()
-		longestMotifsFound = findLongestMotif(allSeq)
-		deltaTime = time.time() - startTime
+		try:
+			if entry[-4:] == '.txt':
+				allSequenceRecords = SeqIO.parse(entry,'fasta')
+				allSeq = []
+				for seq in allSequenceRecords:
+					allSeq.append(str(seq.seq))
+			else:
+				proteinIds = entry.split(',')
+				allSeq = []
+				for id in proteinIds:
+					allSeq.append(getUniProtFasta(id))
+			
+			# Run process
+			startTime = time.time()
+			longestMotifsFound = findLongestMotif(allSeq)
+			deltaTime = time.time() - startTime
 
-		resultListbox.insert(0,longestMotifsFound[0])
-		resultListbox.insert(0,'Time: ' + str(deltaTime)[:5] + 's')
-		for i in range(1,len(longestMotifsFound)):
-			resultListbox.insert(i,longestMotifsFound[i-1])
+			resultListbox.insert(0,'')
+			for motif in longestMotifsFound:
+				resultListbox.insert(0,motif)
+			resultListbox.insert(0,'> ' + entry + ' T= ' + str(deltaTime)[:5] + 's')
+		except:
+			resultListbox.insert(0,'')
+			resultListbox.insert(0,'> No result: bad input')
 
 
 def getMLocPage():
