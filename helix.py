@@ -12,7 +12,13 @@ from Bio import SeqIO
 import tkinter as tk
 from tkinter import ttk
 
-# Functions
+
+'''
+------------------------------------------
+				Functions
+------------------------------------------
+'''
+
 
 # param: a protein UnitProt ID
 # return: the protein's DNA sequence
@@ -65,6 +71,7 @@ def findLongestMotif(dnaSeqs):
 	allLongest = []
 	longest = ''
 	totalIterations = len(smallestSeq)
+	#progressBar.config(mode='determinate',maximum=totalIterations)
 
 	# Iterate over all posible combinations and find the longest shared motif
 	for startIndex in range(len(smallestSeq)+1):
@@ -72,6 +79,8 @@ def findLongestMotif(dnaSeqs):
 		currentSubSeq = smallestSeq[startIndex:endIndex]
 
 		#print(str(startIndex/totalIterations*100)[:4],'%')
+		#progressBar['value'] = startIndex
+		#progressBar.update()
 
 		while len(currentSubSeq) >= len(longest):
 			if isGlobalSubfragment(currentSubSeq,dnaSeqs):
@@ -161,8 +170,13 @@ def getLSMPage():
 	searchButton.config(bg=appBgColor)
 	searchButton.pack(side='top')
 
-	spacer3 = tk.Label(frame,text='',font='Arial 30',bg=appBgColor)
+	spacer3 = tk.Label(frame,text='',font='Arial 25',bg=appBgColor)
 	spacer3.pack(side='top')
+
+	#global progressBar
+	#progressBar = ttk.Progressbar(frame, length=450)
+	#progressBar.pack(side='top')
+
 	global resultListbox
 	resultListbox = tk.Listbox(frame,background='#141414',fg='white',selectbackground='#2f6492',width=50,height=8)
 	resultListbox.pack(side='top')
