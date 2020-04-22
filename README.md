@@ -6,6 +6,13 @@ In molecular biology and DNA sequence analysis it is always very useful to ident
 ## App
 ![SS1](/assets/helixSS1.png)
 
+## Tools
+Tool | About
+------------ | -------------
+Find longest shared motif | Given `<n>` sequences (aa or bp), returns the longest(s) global subsequence(s).
+Find motif locations | Given a subsequence `<s>` and a protein ID or file name (FASTA format), returns all the locations of occurrence.
+Get sequence | Retrieve a protein aminoacid sequence from UniProt and saves it into a file (FASTA format).
+
 ## Requirements
 * python 3.x
 * BioPython
