@@ -4,7 +4,9 @@
 In molecular biology and DNA sequence analysis it is always very useful to identify patterns (motifs) in order to find shared functions between proteins or to identify genes shared by different species (in genomes). For this, Helix, a bioinformatic approach, presents an interactive user interface to analyze different DNA sequences in FASTA format (from UniProt or NCBI) to find shared motifs and their location.
 
 ## App
-<img src="https://github.com/Lfquezada/Helix/blob/master/assets/helixSS1.png" width="500" class="center">
+<p align="center">
+  <img src="https://github.com/Lfquezada/Helix/blob/master/assets/helixSS1.png" width="500">
+</p>
 
 ## Tools
 Tool | Description
