@@ -13,7 +13,7 @@ Tool | Description
 ------------ | -------------
 Find longest shared motif | Given `n` sequences (by protein IDs or file FASTA format), returns the longest global subsequence(s).
 Get consensus | Given `n` sequences (by protein IDs or file FASTA format), returns the consensus.
-Get Weblogo | Given `n` sequences (by protein IDs or file FASTA format), save to a `.png` file the [Weblogo](https://weblogo.berkeley.edu)
+Get Weblogo | Given `n` sequences (by protein IDs or file FASTA format), saves the [Weblogo](https://weblogo.berkeley.edu) to a `.png` file.
 Find motif locations | Given a `subsequence` and a protein ID or file (FASTA format), returns all the locations of occurrence.
 Get sequence | Retrieve a protein aminoacid sequence from UniProt and saves it into a file (FASTA format).
 
