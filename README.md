@@ -11,15 +11,15 @@ In molecular biology and DNA sequence analysis it is always very useful to ident
 ## Tools
 Tool | Description
 ------------ | -------------
-Find longest shared motif | Given `n` sequences (by protein IDs or file [FASTA format]), returns the longest(s) global subsequence(s).
+Find longest shared motif | Given `n` sequences (by protein IDs or file FASTA format), returns the longest global subsequence(s).
 Get consensus | Given `n` sequences (by protein IDs or file FASTA format), returns the consensus.
 Get Weblogo | Given `n` sequences (by protein IDs or file FASTA format), save to a `.png` file the [Weblogo](https://weblogo.berkeley.edu)
-Find motif locations | Given a subsequence `s` and a protein ID or file (FASTA format), returns all the locations of occurrence.
+Find motif locations | Given a `subsequence` and a protein ID or file (FASTA format), returns all the locations of occurrence.
 Get sequence | Retrieve a protein aminoacid sequence from UniProt and saves it into a file (FASTA format).
 
 ## Requirements
 * python 3.x
-* BioPython
+* [BioPython](https://biopython.org)
 
 ## Usage
 ```
@@ -27,5 +27,5 @@ python3 helix.py
 ```
 
 ## Author
-* **Luis Quezada**
-* **Esteban del Valle**
+* **Luis Quezada 18028**
+* **Esteban del Valle 18221**
