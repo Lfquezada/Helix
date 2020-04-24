@@ -124,10 +124,10 @@ def mainApp(reload):
 	pubmedLogoLabel = tk.Label(frame,image=pubmedLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
 	pubmedLogoLabel.place(relx=0.65,rely=0.8)
 
-	options = ['Find longest shared motif','Find motif locations','Get sequence']
+	options = ['Find longest shared motif','Get consensus','Get Weblogo','Find motif locations','Get sequence']
 	selectedOption = tk.StringVar(frame)
 	selectedOption.set(options[0])
-	dropDownMenu = tk.OptionMenu(frame,selectedOption,options[0],options[1],options[2])
+	dropDownMenu = tk.OptionMenu(frame,selectedOption,options[0],options[1],options[2],options[3],options[4])
 	dropDownMenu.config(bg=appBgColor)
 	dropDownMenu.place(relx=0.1,rely=0.5,relwidth=0.5)
 
@@ -139,6 +139,10 @@ def mainApp(reload):
 def redirect(selectedOption):
 	if selectedOption == 'Find longest shared motif':
 		getLSMPage()
+	if selectedOption == 'Get consensus':
+		getConsensusPage()
+	if selectedOption == 'Get Weblogo':
+		getWebLogoPage()
 	if selectedOption == 'Find motif locations':
 		getMLocPage()
 	if selectedOption == 'Get sequence':
@@ -214,6 +218,50 @@ def search(entry):
 		except:
 			resultListbox.insert(0,'')
 			resultListbox.insert(0,'> No result: bad input')
+
+
+def getConsensusPage():
+	root.title('Get Consensus')
+
+	global canvas, frame
+	canvas.destroy()
+	frame.destroy()
+
+	canvas = tk.Canvas(root,height=400,width=700,bg=appBgColor)
+	canvas.pack()
+	frame = tk.Frame(root,bg=appBgColor)
+	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
+
+	spacerTop = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
+	spacerTop.pack(side='top')
+	helixLogoLabel = tk.Label(frame,image=helixLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
+	helixLogoLabel.pack(side='top')
+
+	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
+	returnButton.config(bg=appBgColor)
+	returnButton.pack(side='bottom')
+
+
+def getWebLogoPage():
+	root.title('Get Weblogo')
+
+	global canvas, frame
+	canvas.destroy()
+	frame.destroy()
+
+	canvas = tk.Canvas(root,height=400,width=700,bg=appBgColor)
+	canvas.pack()
+	frame = tk.Frame(root,bg=appBgColor)
+	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
+
+	spacerTop = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
+	spacerTop.pack(side='top')
+	helixLogoLabel = tk.Label(frame,image=helixLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
+	helixLogoLabel.pack(side='top')
+
+	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
+	returnButton.config(bg=appBgColor)
+	returnButton.pack(side='bottom')
 
 
 def getMLocPage():
