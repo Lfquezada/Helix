@@ -15,7 +15,7 @@ Find longest shared motif | Given `n` sequences (by protein IDs or file FASTA fo
 Get consensus | Given `n` sequences (by protein IDs or file FASTA format), returns the consensus.
 Get Weblogo | Given `n` sequences (by protein IDs or file FASTA format), saves the [Weblogo](https://weblogo.berkeley.edu) to a `.png` file.
 Find motif locations | Given a `subsequence` and a protein ID or file (FASTA format), returns all the locations of occurrence.
-Get sequence | Retrieves a protein aminoacid sequence from UniProt and saves it into a file (FASTA format).
+Get sequence | Retrieves a 1 or more protein aminoacid sequences from UniProt and saves it into a file (FASTA format).
 
 ## Requirements
 * python 3.x
