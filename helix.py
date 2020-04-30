@@ -8,7 +8,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 from urllib.request import urlopen
 from Bio.Seq import Seq
-from Bio import SeqIO
+from Bio import SeqIO,motifs
 import tkinter as tk
 from tkinter import ttk
 
@@ -71,16 +71,11 @@ def findLongestMotif(dnaSeqs):
 	allLongest = []
 	longest = ''
 	totalIterations = len(smallestSeq)
-	#progressBar.config(mode='determinate',maximum=totalIterations)
 
 	# Iterate over all posible combinations and find the longest shared motif
 	for startIndex in range(len(smallestSeq)+1):
 		endIndex = len(smallestSeq)
 		currentSubSeq = smallestSeq[startIndex:endIndex]
-
-		#print(str(startIndex/totalIterations*100)[:4],'%')
-		#progressBar['value'] = startIndex
-		#progressBar.update()
 
 		while len(currentSubSeq) >= len(longest):
 			if isGlobalSubfragment(currentSubSeq,dnaSeqs):
@@ -93,6 +88,61 @@ def findLongestMotif(dnaSeqs):
 			endIndex -= 1
 			currentSubSeq = smallestSeq[startIndex:endIndex]
 	return allLongest
+
+
+# param: a list of dna aminoacid sequences
+# return: a list of dna base pair sequences
+def aminoAcidToBase(seqs):
+	translateDic = {'F':'TTT','L':'CTT','I':'ATT','V':'GTT','F':'TTC','L':'CTC','I':'ATC','V':'GTC','L':'TTA','L':'CTA','I':'ATA','V':'GTA','L':'TTG','L':'CTG','M':'ATG','V':'GTG','S':'TCT','P':'CCT','T':'ACT','A':'GCT','S':'TCC','P':'CCC','T':'ACC','A':'GCC','S':'TCA','P':'CCA','T':'ACA','A':'GCA','S':'TCG','P':'CCG','T':'ACG','A':'GCG','Y':'TAT','H':'CAT','N':'AAT','D':'GAT','Y':'TAC','H':'CAC','N':'AAC','D':'GAC','Stop':'TAA','Q':'CAA','K':'AAA','E':'GAA','Stop':'TAG','Q':'CAG','K':'AAG','E':'GAG','C':'TGT','R':'CGT','S':'AGT','G':'GGT','C':'TGC','R':'CGC','S':'AGC','G':'GGC','Stop':'TGA','R':'CGA','R':'AGA','G':'GGA','W':'TGG','R':'CGG','R':'AGG','G':'GGG'}
+	translated = []
+
+	for seq in seqs:
+		translatedSeq = ""
+		for aa in seq:
+			translatedSeq += translateDic[aa]
+		translated.append(translatedSeq)
+
+	return translated
+
+
+# param: a list of dna sequences
+# return: a list of dna sequences all with the same lenght
+def normalizeSeqs(seqs):
+	minLength = min(len(seq) for seq in seqs)
+	normalized = []
+
+	for seq in seqs:
+		normalized.append(Seq(seq[:minLength]))
+
+	return normalized
+
+
+def showConfirmation(text,confirmed):
+
+	# Set up window
+	confWindow = tk.Tk()
+	confWindow.title("Helix")
+
+	canvas2 = tk.Canvas(confWindow,height=125,width=400,bg=appBgColor)
+	canvas2.pack()
+	frame2 = tk.Frame(confWindow,bg=appBgColor)
+	frame2.place(relx=0,rely=0,relwidth=1,relheight=1)
+
+	spacer1 = tk.Label(frame2,text = ' ',font='Arial 30',bg=appBgColor)
+	spacer1.pack(side='top')
+
+	confLabel = tk.Label(frame2,text=text,bg=appBgColor,font='Arial 15 bold')
+	if confirmed:
+		confLabel['fg'] = '#27ae60'
+	else:
+		confLabel['fg'] = '#e74c3c'
+	confLabel.pack(side='top')
+
+	spacer2 = tk.Label(frame2,text = ' ',font='Arial 15',bg=appBgColor)
+	spacer2.pack(side='top')
+
+	closeButton = tk.Button(frame2,text='Ok',fg='#575757',width=10,command=lambda: confWindow.destroy())
+	closeButton.pack(side='top')
 
 
 # Home Screen
@@ -116,13 +166,11 @@ def mainApp(reload):
 	helixLogoLabel.pack(side='top')
 
 	uniProtLogoLabel = tk.Label(frame,image=unitProtLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
-	uniProtLogoLabel.place(relx=0.2,rely=0.8)
+	uniProtLogoLabel.place(relx=0.25,rely=0.8)
 	ncbiLogoLabel = tk.Label(frame,image=ncbiLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
-	ncbiLogoLabel.place(relx=0.35,rely=0.8)
+	ncbiLogoLabel.place(relx=0.45,rely=0.8)
 	bioPythonLogoLabel = tk.Label(frame,image=bioPythonLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
-	bioPythonLogoLabel.place(relx=0.5,rely=0.8)
-	pubmedLogoLabel = tk.Label(frame,image=pubmedLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
-	pubmedLogoLabel.place(relx=0.65,rely=0.8)
+	bioPythonLogoLabel.place(relx=0.65,rely=0.8)
 
 	options = ['Find longest shared motif','Get consensus','Get Weblogo','Find motif locations','Get sequence']
 	selectedOption = tk.StringVar(frame)
@@ -170,16 +218,12 @@ def getLSMPage():
 
 	spacer2 = tk.Label(frame,text='',font='Arial 20',bg=appBgColor)
 	spacer2.pack(side='top')
-	searchButton = tk.Button(frame,text='  Search  ',fg=lightLetterColor,command=lambda: search(entry.get()))
+	searchButton = tk.Button(frame,text='  Find  ',fg=lightLetterColor,command=lambda: search(entry.get()))
 	searchButton.config(bg=appBgColor)
 	searchButton.pack(side='top')
 
 	spacer3 = tk.Label(frame,text='',font='Arial 25',bg=appBgColor)
 	spacer3.pack(side='top')
-
-	#global progressBar
-	#progressBar = ttk.Progressbar(frame, length=450)
-	#progressBar.pack(side='top')
 
 	global resultListbox
 	resultListbox = tk.Listbox(frame,background='#141414',fg='white',selectbackground='#2f6492',width=50,height=8)
@@ -232,14 +276,64 @@ def getConsensusPage():
 	frame = tk.Frame(root,bg=appBgColor)
 	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
 
-	spacerTop = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
-	spacerTop.pack(side='top')
-	helixLogoLabel = tk.Label(frame,image=helixLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
-	helixLogoLabel.pack(side='top')
+	spacer1 = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
+	spacer1.pack(side='top')
+	instruction = tk.Label(frame,text = 'Enter protein IDs or filename',fg='white',bg=appBgColor)
+	instruction.pack(side='top')
+	entry = tk.Entry(frame,fg='white',bg='#141414',width=50)
+	entry.pack(side='top')
+
+	spacer2 = tk.Label(frame,text='',font='Arial 20',bg=appBgColor)
+	spacer2.pack(side='top')
+	searchButton = tk.Button(frame,text='  Get Consensus  ',fg=lightLetterColor,command=lambda: getConsensus(entry.get()))
+	searchButton.config(bg=appBgColor)
+	searchButton.pack(side='top')
+
+	spacer3 = tk.Label(frame,text='',font='Arial 25',bg=appBgColor)
+	spacer3.pack(side='top')
+
+	global resultListbox
+	resultListbox = tk.Listbox(frame,background='#141414',fg='white',selectbackground='#2f6492',width=50,height=8)
+	resultListbox.pack(side='top')
 
 	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
 	returnButton.config(bg=appBgColor)
 	returnButton.pack(side='bottom')
+
+def getConsensus(entry):
+	if entry != '':
+		try:
+			if entry[-4:] == '.txt':
+				allSequenceRecords = SeqIO.parse(entry,'fasta')
+				allSeq = []
+				for seq in allSequenceRecords:
+					allSeq.append(str(seq.seq))
+				allSeq = normalizeSeqs(allSeq)
+			else:
+				proteinIds = entry.split(',')
+				allSeq = []
+				for id in proteinIds:
+					allSeq.append(getUniProtFasta(id))
+				allSeq = aminoAcidToBase(allSeq)
+				allSeq = normalizeSeqs(allSeq)
+
+			# Run process
+			startTime = time.time()
+			
+			# Find consensus
+			motifData = motifs.create(allSeq)
+			consensus =  str(motifData.consensus)
+			degenerate_consensus = str(motifData.degenerate_consensus)
+			
+			deltaTime = time.time() - startTime
+
+			resultListbox.insert(0,'')
+			resultListbox.insert(0,'Degenerate Consensus: ' + degenerate_consensus)
+			resultListbox.insert(0,'Consensus: ' + consensus)
+			resultListbox.insert(0,'> ' + entry + ' T= ' + str(deltaTime)[:5] + 's')
+		except:
+			resultListbox.insert(0,'')
+			resultListbox.insert(0,'> No result: bad input')
 
 
 def getWebLogoPage():
@@ -254,14 +348,67 @@ def getWebLogoPage():
 	frame = tk.Frame(root,bg=appBgColor)
 	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
 
-	spacerTop = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
-	spacerTop.pack(side='top')
-	helixLogoLabel = tk.Label(frame,image=helixLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
-	helixLogoLabel.pack(side='top')
+	spacer1 = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
+	spacer1.pack(side='top')
+	instruction1 = tk.Label(frame,text = 'Enter protein IDs or filename',fg='white',bg=appBgColor)
+	instruction1.pack(side='top')
+	entry1 = tk.Entry(frame,fg='white',bg='#141414',width=50)
+	entry1.pack(side='top')
+
+	spacer2 = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
+	spacer2.pack(side='top')
+	instruction2 = tk.Label(frame,text = 'Save to',fg='white',bg=appBgColor)
+	instruction2.pack(side='top')
+	entry2 = tk.Entry(frame,fg='white',bg='#141414',width=50)
+	entry2.pack(side='top')
+
+	spacer3 = tk.Label(frame,text='',font='Arial 20',bg=appBgColor)
+	spacer3.pack(side='top')
+	getButton = tk.Button(frame,text='  Generate Weblogo  ',fg=lightLetterColor,command=lambda: getWebLogo(entry1.get(),entry2.get()))
+	getButton.config(bg=appBgColor)
+	getButton.pack(side='top')
 
 	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
 	returnButton.config(bg=appBgColor)
 	returnButton.pack(side='bottom')
+
+def getWebLogo(entry,saveName):
+	if entry != '':
+
+		if saveName != '':
+			if saveName[-4:] != '.png':
+				saveName += '.png'
+		else:
+			saveName = entry[:-4] + '-weblogo.png'
+
+		try:
+			if entry[-4:] == '.txt':
+				allSequenceRecords = SeqIO.parse(entry,'fasta')
+				allSeq = []
+				for seq in allSequenceRecords:
+					allSeq.append(str(seq.seq))
+				allSeq = normalizeSeqs(allSeq)
+			else:
+				proteinIds = entry.split(',')
+				allSeq = []
+				for id in proteinIds:
+					allSeq.append(getUniProtFasta(id))
+				allSeq = aminoAcidToBase(allSeq)
+				allSeq = normalizeSeqs(allSeq)
+
+			# Run process
+			startTime = time.time()
+			
+			# Create motif data
+			motifData = motifs.create(allSeq)
+			motifData.weblogo(saveName)
+
+			deltaTime = time.time() - startTime
+
+			showConfirmation('Weblogo saved! \n(' + saveName + ')',True)
+
+		except:
+			showConfirmation('Sorry, error creating Weblogo.',False)
 
 
 def getMLocPage():
@@ -321,7 +468,6 @@ root.configure(background='white')
 unitProtLogo = tk.PhotoImage(file='assets/logo-uniprot.png')
 ncbiLogo = tk.PhotoImage(file='assets/logo-ncbi.png')
 bioPythonLogo = tk.PhotoImage(file='assets/logo-biopython.png')
-pubmedLogo = tk.PhotoImage(file='assets/logo-pubmed.png')
 helixLogo = tk.PhotoImage(file='assets/logo-helix.png')
 appBgColor = '#181818'
 lightLetterColor = '#3d3d3d'
