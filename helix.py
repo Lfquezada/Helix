@@ -233,8 +233,6 @@ def getLSMPage():
 	returnButton.config(bg=appBgColor)
 	returnButton.pack(side='bottom')
 
-
-# test IDs: R1AB_CVHSA,R1AB_BCHK3,R1AB_CVMJH
 def search(entry):
 
 	if entry != '':
@@ -308,6 +306,12 @@ def getConsensus(entry):
 				allSeq = []
 				for seq in allSequenceRecords:
 					allSeq.append(str(seq.seq))
+
+				for aa in ['F', 'L', 'I', 'V', 'M', 'S', 'P', 'Y', 'H', 'N', 'D', 'Q', 'K', 'E', 'R', 'W']:
+					if aa in allSeq[0]:
+						allSeq = aminoAcidToBase(allSeq)
+						break
+
 				allSeq = normalizeSeqs(allSeq)
 			else:
 				proteinIds = entry.split(',')
@@ -387,6 +391,12 @@ def getWebLogo(entry,saveName):
 				allSeq = []
 				for seq in allSequenceRecords:
 					allSeq.append(str(seq.seq))
+
+				for aa in ['F', 'L', 'I', 'V', 'M', 'S', 'P', 'Y', 'H', 'N', 'D', 'Q', 'K', 'E', 'R', 'W']:
+					if aa in allSeq[0]:
+						allSeq = aminoAcidToBase(allSeq)
+						break
+						
 				allSeq = normalizeSeqs(allSeq)
 			else:
 				proteinIds = entry.split(',')
@@ -445,14 +455,48 @@ def getSeqPage():
 	frame = tk.Frame(root,bg=appBgColor)
 	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
 
-	spacerTop = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
-	spacerTop.pack(side='top')
-	helixLogoLabel = tk.Label(frame,image=helixLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
-	helixLogoLabel.pack(side='top')
+	spacer1 = tk.Label(frame,text='',font='Arial 100',bg=appBgColor)
+	spacer1.pack(side='top')
+	instruction1 = tk.Label(frame,text = 'Enter protein ID (or IDs separated by ",")',fg='white',bg=appBgColor)
+	instruction1.pack(side='top')
+	entry1 = tk.Entry(frame,fg='white',bg='#141414',width=50)
+	entry1.pack(side='top')
+
+	spacer2 = tk.Label(frame,text='',font='Arial 50',bg=appBgColor)
+	spacer2.pack(side='top')
+	getButton = tk.Button(frame,text='  Retreive  ',fg=lightLetterColor,command=lambda: getSequence(entry1.get()))
+	getButton.config(bg=appBgColor)
+	getButton.pack(side='top')
 
 	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
 	returnButton.config(bg=appBgColor)
 	returnButton.pack(side='bottom')
+
+def getSequence(entry):
+
+	try:
+		proteinIds = entry.split(',')
+		allSeq = []
+		for id in proteinIds:
+			allSeq.append(getUniProtFasta(id))
+
+		file = open("sequences.txt","w")
+
+		for i in range(len(proteinIds)):
+			file.write('> ' + proteinIds[i] + '\n')
+
+			index = 0
+			while index <= len(allSeq[i]):
+				file.write(allSeq[i][index:index+60] + '\n')
+				index += 60
+
+		file.close()
+
+		showConfirmation('Retreived sequences.\nSaved to "sequences.txt"',True)
+	except:
+		showConfirmation('Error, could not save file.',False)
+
+
 
 
 '''
