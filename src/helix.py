@@ -411,7 +411,7 @@ def getWebLogo(entry,saveName):
 			
 			# Create motif data
 			motifData = motifs.create(allSeq)
-			motifData.weblogo(saveName)
+			motifData.weblogo('weblogos/'+saveName)
 
 			deltaTime = time.time() - startTime
 
