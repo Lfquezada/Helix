@@ -5,7 +5,7 @@ In molecular biology and DNA sequence analysis it is always very useful to ident
 
 ## App
 <p align="center">
-  <img src="https://github.com/Lfquezada/Helix/blob/master/assets/helixSS1.png" width="500">
+  <img src="https://github.com/Lfquezada/Helix/blob/master/src/assets/helixSS1.png" width="500">
 </p>
 
 ## Tools
