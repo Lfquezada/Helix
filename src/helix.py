@@ -458,7 +458,7 @@ def getMLocPage():
 	spacer4.pack(side='top')
 	resLabel = tk.Label(frame,text = '',font='Arial 20 bold',fg='#3498db',bg=appBgColor)
 	resLabel.pack(side='top')
-
+	
 	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
 	returnButton.config(bg=appBgColor)
 	returnButton.pack(side='bottom')
