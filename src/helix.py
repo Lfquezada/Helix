@@ -433,14 +433,53 @@ def getMLocPage():
 	frame = tk.Frame(root,bg=appBgColor)
 	frame.place(relx=0,rely=0,relwidth=1,relheight=1)
 
-	spacerTop = tk.Label(frame,text='',font='Arial 40',bg=appBgColor)
-	spacerTop.pack(side='top')
-	helixLogoLabel = tk.Label(frame,image=helixLogo,pady=0, padx=0, borderwidth=0, highlightthickness=0)
-	helixLogoLabel.pack(side='top')
+	spacer1 = tk.Label(frame,text='',font='Arial 30',bg=appBgColor)
+	spacer1.pack(side='top')
+	instruction1 = tk.Label(frame,text = 'Enter protein ID',fg='white',bg=appBgColor)
+	instruction1.pack(side='top')
+	entry1 = tk.Entry(frame,fg='white',bg='#141414',width=50)
+	entry1.pack(side='top')
+
+	spacer2 = tk.Label(frame,text='',font='Arial 20',bg=appBgColor)
+	spacer2.pack(side='top')
+	instruction2 = tk.Label(frame,text = 'Enter motif sequence',fg='white',bg=appBgColor)
+	instruction2.pack(side='top')
+	entry2 = tk.Entry(frame,fg='white',bg='#141414',width=50)
+	entry2.pack(side='top')
+
+	spacer3 = tk.Label(frame,text='',font='Arial 15',bg=appBgColor)
+	spacer3.pack(side='top')
+	getButton = tk.Button(frame,text='  Locate  ',fg=lightLetterColor,command=lambda: getMotifLocations(entry1.get(),entry2.get()))
+	getButton.config(bg=appBgColor)
+	getButton.pack(side='top')
+
+	global resLabel
+	spacer4 = tk.Label(frame,text='',font='Arial 20',bg=appBgColor)
+	spacer4.pack(side='top')
+	resLabel = tk.Label(frame,text = '',font='Arial 20 bold',fg='#3498db',bg=appBgColor)
+	resLabel.pack(side='top')
 
 	returnButton = tk.Button(frame,text='  return  ',fg=lightLetterColor,command=lambda: mainApp(reload=True))
 	returnButton.config(bg=appBgColor)
 	returnButton.pack(side='bottom')
+
+def getMotifLocations(protein_id,motif):
+	if protein_id != '' and motif != '':
+		try:
+			protein_seq = getUniProtFasta(protein_id)
+			locs = findMotifLocations(motif,protein_seq)
+
+			text = 'Location(s): '
+
+			if len(locs) == 0:
+				text = 'No locations found'
+			else:
+				for loc in locs:
+					text += (str(loc) + '  ')
+			resLabel['text'] = text
+
+		except:
+			resLabel['text'] = 'Error'
 
 
 def getSeqPage():
