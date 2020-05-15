@@ -11,6 +11,7 @@ from Bio.Seq import Seq
 from Bio import SeqIO,motifs
 import tkinter as tk
 from tkinter import ttk
+from PIL import Image
 
 
 '''
@@ -383,7 +384,10 @@ def getWebLogo(entry,saveName):
 			if saveName[-4:] != '.png':
 				saveName += '.png'
 		else:
-			saveName = entry[:-4] + '-weblogo.png'
+			if entry[-4:] == '.txt':
+				saveName = entry[:-4] + '-weblogo.png'
+			else:
+				saveName = entry + '-weblogo.png'
 
 		try:
 			if entry[-4:] == '.txt':
@@ -416,6 +420,9 @@ def getWebLogo(entry,saveName):
 			deltaTime = time.time() - startTime
 
 			showConfirmation('Weblogo saved! \n(' + saveName + ')',True)
+			
+			im = Image.open('weblogos/'+saveName)
+			im.show()
 
 		except:
 			showConfirmation('Sorry, error creating Weblogo.',False)
