@@ -10,7 +10,7 @@ from urllib.request import urlopen
 from Bio.Seq import Seq
 from Bio import SeqIO,motifs
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk,messagebox
 from PIL import Image
 
 
@@ -116,35 +116,7 @@ def normalizeSeqs(seqs):
 		normalized.append(Seq(seq[:minLength]))
 
 	return normalized
-
-
-def showConfirmation(text,confirmed):
-
-	# Set up window
-	confWindow = tk.Tk()
-	confWindow.title("Helix")
-
-	canvas2 = tk.Canvas(confWindow,height=125,width=400,bg=appBgColor)
-	canvas2.pack()
-	frame2 = tk.Frame(confWindow,bg=appBgColor)
-	frame2.place(relx=0,rely=0,relwidth=1,relheight=1)
-
-	spacer1 = tk.Label(frame2,text = ' ',font='Arial 30',bg=appBgColor)
-	spacer1.pack(side='top')
-
-	confLabel = tk.Label(frame2,text=text,bg=appBgColor,font='Arial 15 bold')
-	if confirmed:
-		confLabel['fg'] = '#27ae60'
-	else:
-		confLabel['fg'] = '#e74c3c'
-	confLabel.pack(side='top')
-
-	spacer2 = tk.Label(frame2,text = ' ',font='Arial 15',bg=appBgColor)
-	spacer2.pack(side='top')
-
-	closeButton = tk.Button(frame2,text='Ok',fg='#575757',width=10,command=lambda: confWindow.destroy())
-	closeButton.pack(side='top')
-
+	
 
 # Home Screen
 def mainApp(reload):
@@ -419,13 +391,13 @@ def getWebLogo(entry,saveName):
 
 			deltaTime = time.time() - startTime
 
-			showConfirmation('Weblogo saved! \n(' + saveName + ')',True)
+			messagebox.showinfo('Weblogo', 'Weblogo saved! \n(' + saveName + ')')
 			
 			im = Image.open('weblogos/'+saveName)
 			im.show()
 
 		except:
-			showConfirmation('Sorry, error creating Weblogo.',False)
+			messagebox.showerror('Error', 'Sorry, error creating Weblogo.')
 
 
 def getMLocPage():
@@ -538,10 +510,9 @@ def getSequence(entry):
 
 		file.close()
 
-		showConfirmation('Retreived sequences.\nSaved to "sequences.txt"',True)
+		messagebox.showinfo('Get Sequence', 'Retreived sequences. Saved to "sequences.txt"')
 	except:
-		showConfirmation('Error, could not save file.',False)
-
+		messagebox.showerror('Error', 'Could not save file.')
 
 
 
