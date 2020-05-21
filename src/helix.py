@@ -308,9 +308,7 @@ def getConsensus(entry):
 			resultListbox.insert(0,'Consensus: ' + consensus)
 			resultListbox.insert(0,'> ' + entry + ' T= ' + str(deltaTime)[:5] + 's')
 		except:
-			resultListbox.insert(0,'')
-			resultListbox.insert(0,'> No result: bad input')
-
+			messagebox.showerror('Error','Bad input or Uniprot service offline.')
 
 def getWebLogoPage():
 	root.title('Get Weblogo')
@@ -458,6 +456,7 @@ def getMotifLocations(protein_id,motif):
 
 		except:
 			resLabel['text'] = 'Error'
+			messagebox.showerror('Error','Bad input or Uniprot service offline.')
 
 
 def getSeqPage():
