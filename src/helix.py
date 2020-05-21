@@ -231,8 +231,7 @@ def search(entry):
 				resultListbox.insert(0,motif)
 			resultListbox.insert(0,'> ' + entry + ' T= ' + str(deltaTime)[:5] + 's')
 		except:
-			resultListbox.insert(0,'')
-			resultListbox.insert(0,'> No result: bad input')
+			messagebox.showerror('Error','Bad input or Uniprot service offline.')
 
 
 def getConsensusPage():
